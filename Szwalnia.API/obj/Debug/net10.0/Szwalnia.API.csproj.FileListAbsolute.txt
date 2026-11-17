@@ -1,0 +1,9 @@
+C:\Users\oskar\source\repos\ZTPAI\System-Zarzadzania-Szwalnia-IO\Szwalnia.API\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\oskar\source\repos\ZTPAI\System-Zarzadzania-Szwalnia-IO\Szwalnia.API\obj\Debug\net10.0\Szwalnia.API.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\oskar\source\repos\ZTPAI\System-Zarzadzania-Szwalnia-IO\Szwalnia.API\obj\Debug\net10.0\Szwalnia.API.AssemblyInfoInputs.cache
+C:\Users\oskar\source\repos\ZTPAI\System-Zarzadzania-Szwalnia-IO\Szwalnia.API\obj\Debug\net10.0\Szwalnia.API.AssemblyInfo.cs
+C:\Users\oskar\source\repos\ZTPAI\System-Zarzadzania-Szwalnia-IO\Szwalnia.API\obj\Debug\net10.0\Szwalnia.API.csproj.CoreCompileInputs.cache
+C:\Users\oskar\source\repos\ZTPAI\System-Zarzadzania-Szwalnia-IO\Szwalnia.API\obj\Debug\net10.0\Szwalnia.API.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\oskar\source\repos\ZTPAI\System-Zarzadzania-Szwalnia-IO\Szwalnia.API\obj\Debug\net10.0\Szwalnia.API.sourcelink.json
+C:\Users\oskar\source\repos\ZTPAI\System-Zarzadzania-Szwalnia-IO\Szwalnia.API\obj\Debug\net10.0\Szwalnia.API.csproj.AssemblyReference.cache
+C:\Users\oskar\source\repos\ZTPAI\System-Zarzadzania-Szwalnia-IO\Szwalnia.API\obj\Debug\net10.0\Szwalnia.API.MvcApplicationPartsAssemblyInfo.cs
