@@ -22,5 +22,9 @@ if (app.Environment.IsDevelopment())
 // Podlaczenie endpointow zdefiniowanych w kontrolerach
 app.MapControllers();
 
+app.MapGet("/health", () =>
+    Results.Ok(new { status = "ok" })
+);
+
 // Uruchomienie serwera.
 app.Run();

@@ -19,7 +19,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: backend/Dockerfile
+      dockerfile: Szwalnia.API/Dockerfile
     environment:
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__Default: Server=db;Database=SzwalniaFlow;User Id=sa;Password=${SQL_PASSWORD};TrustServerCertificate=True
@@ -41,7 +41,7 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: frontend/Dockerfile
+      dockerfile: Szwalnia.Website/Dockerfile
     ports:
       - "127.0.0.1:${APP_PORT:-18080}:80"
     depends_on:

@@ -18,6 +18,10 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 
 WORKDIR /app
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
 ENV ASPNETCORE_HTTP_PORTS=8080
 
 EXPOSE 8080
