@@ -1,0 +1,54 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${SQL_PASSWORD:?Uruchom scripts/setup.ps1 albo scripts/setup.sh}
+    ports:
+      - "127.0.0.1:14333:1433"
+    volumes:
+      - sql-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' -b -o /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    restart: unless-stopped
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Default: Server=db;Database=SzwalniaFlow;User Id=sa;Password=${SQL_PASSWORD};TrustServerCertificate=True
+      Seed__AdminPassword: ${ADMIN_PASSWORD:?Wygeneruj plik .env}
+      Seed__WorkerPassword: ${WORKER_PASSWORD:?Wygeneruj plik .env}
+      Seed__Demo: ${SEED_DEMO:-true}
+      Security__SecureCookies: "false"
+    volumes:
+      - session-keys:/root/.aspnet/DataProtection-Keys
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 15
+    restart: unless-stopped
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "127.0.0.1:${APP_PORT:-18080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  sql-data:
+  session-keys:
+

@@ -2,15 +2,33 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8d747f3e-2037-4db9-8759-fd6a13d84262" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Szwalnia.API/Domain/Batch.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Szwalnia.API/Domain/CutOrder.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Szwalnia.API/Domain/Entity.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Szwalnia.API/Domain/Material.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Szwalnia.API/Domain/Product.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Szwalnia.API/Domain/Roll.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Szwalnia.API/Domain/Seamstress.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Szwalnia.API/Domain/SewOrder.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Szwalnia.API/appsettings.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Szwalnia.API/Controllers/AuthController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Szwalnia.API/DTO/LoginRequest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Szwalnia.API/DTO/MaterialRequest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Szwalnia.API/DTO/Page.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Szwalnia.API/DTO/ProductRequest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Szwalnia.API/DTO/SeamstressRequest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Szwalnia.API/DTO/UserRequest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Szwalnia.API/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Szwalnia.API/Domain/ReportJob.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Szwalnia.API/Domain/StatusChange.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Szwalnia.API/Domain/User.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Szwalnia.API/Domain/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Szwalnia.API/Domain/Entity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Szwalnia.API/Domain/SewOrder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Szwalnia.API/Domain/SewOrder.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Szwalnia.API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Szwalnia.API/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Szwalnia.API/obj/Debug/net10.0/Szwalnia.API.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Szwalnia.API/obj/Debug/net10.0/Szwalnia.API.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Szwalnia.API/obj/Debug/net10.0/Szwalnia.API.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Szwalnia.API/obj/Debug/net10.0/Szwalnia.API.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Szwalnia.API/obj/Debug/net10.0/Szwalnia.API.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/Szwalnia.API/obj/Debug/net10.0/Szwalnia.API.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Szwalnia.API/obj/Debug/net10.0/Szwalnia.API.MvcApplicationPartsAssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Szwalnia.API/obj/Debug/net10.0/Szwalnia.API.MvcApplicationPartsAssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Szwalnia.API/obj/Debug/net10.0/Szwalnia.API.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Szwalnia.API/obj/Debug/net10.0/Szwalnia.API.assets.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Szwalnia.API/obj/Debug/net10.0/Szwalnia.API.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Szwalnia.API/obj/Debug/net10.0/Szwalnia.API.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Szwalnia.API/obj/Debug/net10.0/Szwalnia.API.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Szwalnia.API/obj/Debug/net10.0/Szwalnia.API.csproj.FileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Szwalnia.API/obj/Debug/net10.0/Szwalnia.API.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/Szwalnia.API/obj/Debug/net10.0/Szwalnia.API.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Szwalnia.API/obj/Szwalnia.API.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/Szwalnia.API/obj/Szwalnia.API.csproj.nuget.dgspec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Szwalnia.API/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/Szwalnia.API/obj/project.assets.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Szwalnia.API/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/Szwalnia.API/obj/project.nuget.cache" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,20 +46,89 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Szwalnia.API/Controllers/AuthController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Szwalnia.API/DTO/LoginRequest.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Szwalnia.API/DTO/MaterialRequest.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Szwalnia.API/DTO/Page.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Szwalnia.API/DTO/ProductRequest.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Szwalnia.API/DTO/SeamstressRequest.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Szwalnia.API/DTO/UserRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Szwalnia.API/Domain/Batch.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Szwalnia.API/Domain/CutOrder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Szwalnia.API/Domain/Entity.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Szwalnia.API/Domain/Material.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Szwalnia.API/Domain/Product.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Szwalnia.API/Domain/ReportJob.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Szwalnia.API/Domain/Roll.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Szwalnia.API/Domain/Seamstress.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Szwalnia.API/Domain/SewOrder.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Szwalnia.API/Domain/StatusChange.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Szwalnia.API/Domain/User.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Szwalnia.API/Program.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.8330069577915968" />
+      <entry key="MS500" value="4.966106017701271" />
+      <entry key="S2" value="9.599142029480337" />
+      <entry key="S5" value="16.380943279986013" />
+      <entry key="S10" value="23.04543448063077" />
+      <entry key="S30" value="30.675066462569863" />
+      <entry key="S60" value="33.185407403435946" />
+      <entry key="M2" value="34.55235646070678" />
+      <entry key="M5" value="35.410946248616106" />
+      <entry key="M10" value="35.70378026154737" />
+      <entry key="M15" value="35.80214197054003" />
+      <entry key="M30" value="35.900881377763554" />
+      <entry key="H1" value="35.95039319196438" />
+      <entry key="H2" value="35.97518470985151" />
+      <entry key="H4" value="35.98758938190411" />
+      <entry key="D1" value="35.99793115060456" />
+      <entry key="W1" value="35.999704439969285" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="1.739492566293427" />
+      <entry key="MS500" value="4.922927509992015" />
+      <entry key="S2" value="9.579312475095533" />
+      <entry key="S5" value="16.364896893135874" />
+      <entry key="S10" value="23.032737019637768" />
+      <entry key="S30" value="30.668922140353626" />
+      <entry key="S60" value="33.18201041108324" />
+      <entry key="M2" value="34.550568639884425" />
+      <entry key="M5" value="35.41020855877903" />
+      <entry key="M10" value="35.70340755899" />
+      <entry key="M15" value="35.80189263756335" />
+      <entry key="M30" value="35.90075627712119" />
+      <entry key="H1" value="35.95033053275626" />
+      <entry key="H2" value="35.97515335298206" />
+      <entry key="H4" value="35.987573696647544" />
+      <entry key="D1" value="35.99792853544717" />
+      <entry key="W1" value="35.999704066352194" />
+    </decayedShown>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5,
   &quot;fromUser&quot;: false
@@ -51,24 +138,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "ToolWindow.NuGet.ShowToolbar": "false",
-    "cidr.known.project.marker": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "settings.editor.selected.configurable": "configurable.group.appearance",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;ToolWindow.NuGet.ShowToolbar&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.appearance&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="8d747f3e-2037-4db9-8759-fd6a13d84262" name="Changes" comment="" />
@@ -77,7 +165,12 @@
       <option name="presentableId" value="Default" />
       <updated>1794941451553</updated>
       <workItem from="1794941453829" duration="546000" />
-      <workItem from="1794942004972" duration="2770000" />
+      <workItem from="1794942004972" duration="3424000" />
+      <workItem from="1795022246900" duration="2525000" />
+      <workItem from="1795025350585" duration="279000" />
+      <workItem from="1795025638292" duration="33000" />
+      <workItem from="1795025699891" duration="135000" />
+      <workItem from="1795026057903" duration="276000" />
     </task>
     <servers />
   </component>

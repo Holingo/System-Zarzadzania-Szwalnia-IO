@@ -1,6 +1,4 @@
-﻿namespace Szwalnia.API;
-
-var builder = WebApplication.CreateBuilder(args);
+﻿var builder = WebApplication.CreateBuilder(args);
 
 // Rejestracja usług wykorzystywanych przez aplikacje
 builder.Services.AddControllers();

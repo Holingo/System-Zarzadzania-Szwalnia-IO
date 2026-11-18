@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Szwalnia.API;
 
 public abstract class Entity
 {
     public int Id { get; set; }
-
-    [Timestamp] 
+    
+    [Timestamp]
     public byte[] Version { get; set; } = [];
 }
