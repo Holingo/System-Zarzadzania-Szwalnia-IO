@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Szwalnia.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f5605e3e898c493e755e58dc3dc73f1e06ab9c02")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c9dca7c660b92a15bcb86aa9bd9d45423f347d4e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Szwalnia.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Szwalnia.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

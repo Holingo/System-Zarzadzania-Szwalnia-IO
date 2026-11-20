@@ -19,8 +19,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl \
-    && rm -rf /var/lib/apt/lists/*
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl tzdata \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir /app/keys && chown "$APP_UID" /app/keys
 
 ENV ASPNETCORE_HTTP_PORTS=8080
 

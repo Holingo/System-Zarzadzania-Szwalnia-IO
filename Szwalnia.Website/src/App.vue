@@ -25,13 +25,16 @@ const reports = ref([]),
   modalError = ref(''),
   history = ref(null)
 let timer
-const today = () =>
-  new Intl.DateTimeFormat('en-CA', {
+const today = () => {
+  const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Europe/Warsaw',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-  }).format(new Date())
+  }).formatToParts(new Date())
+  const part = (type) => parts.find((item) => item.type === type).value
+  return `${part('year')}-${part('month')}-${part('day')}`
+}
 const monday = () => {
   const date = new Date(today() + 'T12:00:00Z')
   date.setUTCDate(date.getUTCDate() - ((date.getUTCDay() + 6) % 7))
@@ -341,7 +344,8 @@ async function save() {
     await refresh()
     notice.value = 'Zapisano zmiany.'
   } catch (e) {
-    modalError.value = e.message
+    if (modal.value) modalError.value = e.message
+    else handleError(e)
     if (e.status === 401) {
       user.value = null
       modal.value = null

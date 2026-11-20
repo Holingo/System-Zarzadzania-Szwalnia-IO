@@ -18,7 +18,8 @@ public class AuthController(AppDb db, PasswordHasher<User> hasher) : ControllerB
     [HttpPost("login"), EnableRateLimiting("login")]
     public async Task<IActionResult> Login(LoginRequest r)
     {
-        var user = await db.Users.SingleOrDefaultAsync(x => x.Name == r.Name);
+        var name = r.Name.Trim();
+        var user = await db.Users.SingleOrDefaultAsync(x => x.Name == name);
 
         var target = user ?? new User();
         var hash = user?.PasswordHash ?? hasher.HashPassword(target, Guid.NewGuid().ToString());
@@ -55,7 +56,11 @@ public class AuthController(AppDb db, PasswordHasher<User> hasher) : ControllerB
     [HttpPost("users"), Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateUser(UserRequest r)
     {
-        var user = new User { Name = r.Name.Trim(), Role = r.Role }; 
+        var name = r.Name.Trim();
+        if (name.Length < 3)
+            return BadRequest(new ProblemDetails { Title = "Login musi mieć przynajmniej 3 znaki.", Status = 400 });
+
+        var user = new User { Name = name, Role = r.Role };
         
         user.PasswordHash = hasher.HashPassword(user, r.Password);
         

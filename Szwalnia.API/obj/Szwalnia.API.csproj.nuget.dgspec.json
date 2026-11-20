@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\oskar\\source\\repos\\ZTPAI\\System-Zarzadzania-Szwalnia-IO\\Szwalnia.API\\Szwalnia.API.csproj": {}
+    "C:\\Users\\Oskar\\RiderProjects\\System-Zarzadzania-Szwalnia-IO\\Szwalnia.API\\Szwalnia.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\oskar\\source\\repos\\ZTPAI\\System-Zarzadzania-Szwalnia-IO\\Szwalnia.API\\Szwalnia.API.csproj": {
+    "C:\\Users\\Oskar\\RiderProjects\\System-Zarzadzania-Szwalnia-IO\\Szwalnia.API\\Szwalnia.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\oskar\\source\\repos\\ZTPAI\\System-Zarzadzania-Szwalnia-IO\\Szwalnia.API\\Szwalnia.API.csproj",
+        "projectUniqueName": "C:\\Users\\Oskar\\RiderProjects\\System-Zarzadzania-Szwalnia-IO\\Szwalnia.API\\Szwalnia.API.csproj",
         "projectName": "Szwalnia.API",
-        "projectPath": "C:\\Users\\oskar\\source\\repos\\ZTPAI\\System-Zarzadzania-Szwalnia-IO\\Szwalnia.API\\Szwalnia.API.csproj",
-        "packagesPath": "C:\\Users\\oskar\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\oskar\\source\\repos\\ZTPAI\\System-Zarzadzania-Szwalnia-IO\\Szwalnia.API\\obj\\",
+        "projectPath": "C:\\Users\\Oskar\\RiderProjects\\System-Zarzadzania-Szwalnia-IO\\Szwalnia.API\\Szwalnia.API.csproj",
+        "packagesPath": "C:\\Users\\Oskar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Oskar\\RiderProjects\\System-Zarzadzania-Szwalnia-IO\\Szwalnia.API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\oskar\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Oskar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -79,7 +81,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.404/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

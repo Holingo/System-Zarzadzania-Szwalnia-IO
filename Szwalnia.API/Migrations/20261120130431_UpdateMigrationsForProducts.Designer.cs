@@ -12,8 +12,8 @@ using Szwalnia.API.Data;
 namespace Szwalnia.API.Migrations
 {
     [DbContext(typeof(AppDb))]
-    [Migration("20261118200450_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20261120130431_UpdateMigrationsForProducts")]
+    partial class UpdateMigrationsForProducts
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
