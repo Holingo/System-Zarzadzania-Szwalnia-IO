@@ -12,7 +12,7 @@ using Szwalnia.API.Data;
 namespace Szwalnia.API.Migrations
 {
     [DbContext(typeof(AppDb))]
-    [Migration("20261120130431_UpdateMigrationsForProducts")]
+    [Migration("20261120134429_UpdateMigrationsForProducts")]
     partial class UpdateMigrationsForProducts
     {
         /// <inheritdoc />

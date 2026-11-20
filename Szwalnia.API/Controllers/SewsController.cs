@@ -7,7 +7,7 @@ using Szwalnia.API.Services;
 
 namespace Szwalnia.API.Controllers;
 
-[ApiController, Authorize]
+[ApiController, Authorize(Roles = UserRole.SewingAccess)]
 [Route("api/sews")]
 public class SewsController(ProductionService production, ProductionQueries queries) : ControllerBase
 {

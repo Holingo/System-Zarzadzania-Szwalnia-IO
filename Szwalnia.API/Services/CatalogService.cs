@@ -7,17 +7,17 @@ namespace Szwalnia.API.Services;
 
 public class CatalogService(AppDb db)
 {
-    public async Task<CatalogOptions> Options(CancellationToken ct) => new(
-        await db.Materials.OrderBy(x => x.Name).Select(x => new MaterialResponse(x.Id, x.Name, x.Version)).ToListAsync(ct),
-        await db.Products.OrderBy(x => x.Name).ThenBy(x => x.Variant).Select(x => new ProductResponse(
+    public async Task<CatalogOptions> Options(bool canCut, bool canSew, CancellationToken ct) => new(
+        canCut ? await db.Materials.OrderBy(x => x.Name).Select(x => new MaterialResponse(x.Id, x.Name, x.Version)).ToListAsync(ct) : [],
+        canCut ? await db.Products.OrderBy(x => x.Name).ThenBy(x => x.Variant).Select(x => new ProductResponse(
             x.Id, x.Name, x.Variant, x.MaterialId, x.WidthCm, x.MetersPerSet, x.CutSetupMinutes,
-            x.CutMinutesPerSet, x.CutSetupCost, x.CutCostPerSet, x.SewMinutesPerSet, x.SewCostPerSet, x.Version)).ToListAsync(ct),
-        await db.Rolls.OrderBy(x => x.Name).Select(x => new RollResponse(
-            x.Id, x.Name, x.MaterialId, x.WidthCm, x.RemainingMeters, x.ReservedMeters, x.RemainingMeters - x.ReservedMeters, x.Version)).ToListAsync(ct),
-        await db.Seamstresses.OrderBy(x => x.Name).Select(x => new SeamstressResponse(x.Id, x.Name, x.Phone, x.Version)).ToListAsync(ct),
-        await db.Batches.OrderByDescending(x => x.Id).Select(x => new BatchResponse(
+            x.CutMinutesPerSet, x.CutSetupCost, x.CutCostPerSet, x.SewMinutesPerSet, x.SewCostPerSet, x.Version)).ToListAsync(ct) : [],
+        canCut ? await db.Rolls.OrderBy(x => x.Name).Select(x => new RollResponse(
+            x.Id, x.Name, x.MaterialId, x.WidthCm, x.RemainingMeters, x.ReservedMeters, x.RemainingMeters - x.ReservedMeters, x.Version)).ToListAsync(ct) : [],
+        canSew ? await db.Seamstresses.OrderBy(x => x.Name).Select(x => new SeamstressResponse(x.Id, x.Name, x.Phone, x.Version)).ToListAsync(ct) : [],
+        canSew ? await db.Batches.OrderByDescending(x => x.Id).Select(x => new BatchResponse(
             x.Id, x.CutOrderId, x.CutOrder.Product.Name, x.CutOrder.Product.Variant, x.Quantity,
-            x.AllocatedQuantity, x.Quantity - x.AllocatedQuantity, x.CutOrder.SewCostPerSet, x.CutOrder.SewMinutesPerSet)).ToListAsync(ct));
+            x.AllocatedQuantity, x.Quantity - x.AllocatedQuantity, x.CutOrder.SewCostPerSet, x.CutOrder.SewMinutesPerSet)).ToListAsync(ct) : []);
 
     public async Task<int> SaveMaterial(int? id, string? version, MaterialRequest request)
     {

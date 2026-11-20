@@ -6,15 +6,15 @@ using Szwalnia.API.Services;
 
 namespace Szwalnia.API.Controllers;
 
-[ApiController, Authorize]
+[ApiController, Authorize(Roles = UserRole.Admin)]
 [Route("api/reports")]
 public class ReportsController(ReportService reports) : ControllerBase
 {
     [HttpGet]
-    public Task<List<ReportSummary>> List(CancellationToken ct) => reports.List(UserId, User.IsInRole("Admin"), ct);
+    public Task<List<ReportSummary>> List(CancellationToken ct) => reports.List(ct);
 
     [HttpGet("{id:int}")]
-    public Task<ReportResponse> Get(int id, CancellationToken ct) => reports.Get(id, UserId, User.IsInRole("Admin"), ct);
+    public Task<ReportResponse> Get(int id, CancellationToken ct) => reports.Get(id, ct);
 
     [HttpPost]
     public async Task<IActionResult> Create(ReportRequest request, CancellationToken ct)

@@ -17,14 +17,13 @@ public class ReportService(AppDb db)
         return new ReportSummary(job.Id, job.WeekStart, job.Status, job.Error);
     }
 
-    public Task<List<ReportSummary>> List(int userId, bool admin, CancellationToken ct) =>
-        db.Reports.Where(x => admin || x.UserId == userId)
-            .OrderByDescending(x => x.Id).Take(100)
+    public Task<List<ReportSummary>> List(CancellationToken ct) =>
+        db.Reports.OrderByDescending(x => x.Id).Take(100)
             .Select(x => new ReportSummary(x.Id, x.WeekStart, x.Status, x.Error)).ToListAsync(ct);
 
-    public async Task<ReportResponse> Get(int id, int userId, bool admin, CancellationToken ct)
+    public async Task<ReportResponse> Get(int id, CancellationToken ct)
     {
-        var job = await db.Reports.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && (admin || x.UserId == userId), ct)
+        var job = await db.Reports.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, ct)
             ?? throw new BusinessException("Nie znaleziono raportu.", 404);
         return new ReportResponse(job.Id, job.WeekStart, job.Status, job.Error,
             job.ResultJson is null ? null : JsonSerializer.Deserialize<JsonElement>(job.ResultJson));

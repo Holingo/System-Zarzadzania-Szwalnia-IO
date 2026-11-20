@@ -7,7 +7,7 @@ using Szwalnia.API.Services;
 
 namespace Szwalnia.API.Controllers;
 
-[ApiController, Authorize]
+[ApiController, Authorize(Roles = UserRole.CuttingAccess)]
 [Route("api/cuts")]
 public class CutsController(ProductionService production, ProductionQueries queries) : ControllerBase
 {

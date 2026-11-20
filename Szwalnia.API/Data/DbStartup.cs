@@ -12,8 +12,9 @@ public static class DbStartup
         var hasher = scope.ServiceProvider.GetRequiredService<PasswordHasher<User>>();
         await db.Database.MigrateAsync();
 
-        await SeedUser("admin", "Admin", configuration["Seed:AdminPassword"], db, hasher);
-        await SeedUser("worker", "Worker", configuration["Seed:WorkerPassword"], db, hasher);
+        await SeedUser("admin", UserRole.Admin, configuration["Seed:AdminPassword"], db, hasher);
+        await SeedUser("worker", UserRole.Cutting, configuration["Seed:WorkerPassword"], db, hasher);
+        await SeedUser("sewing", UserRole.Sewing, configuration["Seed:SewingPassword"], db, hasher);
         if (!configuration.GetValue<bool>("Seed:Demo") || await db.Materials.AnyAsync())
             return;
 

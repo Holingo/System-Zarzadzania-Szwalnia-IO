@@ -12,7 +12,7 @@ export async function api(path, options = {}) {
       ...options,
       headers: {
         'Content-Type': 'application/json',
-        'X-Requested-With': 'SzwalniaFlow',
+        'X-Requested-With': 'Szwalnia',
         ...options.headers,
       },
       body: options.body === undefined ? undefined : JSON.stringify(options.body),

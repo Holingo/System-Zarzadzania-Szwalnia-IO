@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Szwalnia.API.Data;
+using Szwalnia.API.Domain;
 using Szwalnia.API.DTO;
 
 namespace Szwalnia.API.Controllers;
@@ -50,10 +51,11 @@ public class AuthController(AppDb db, PasswordHasher<User> hasher) : ControllerB
         await HttpContext.SignOutAsync(); return NoContent();
     }
     
-    [HttpGet("users"), Authorize(Roles = "Admin")]
-    public async Task<object> Users() => await db.Users.OrderBy(x => x.Name).Select(x => new { x.Id, x.Name, x.Role }).ToListAsync();
+    [HttpGet("users"), Authorize(Roles = UserRole.Admin)]
+    public async Task<object> Users() => await db.Users.OrderBy(x => x.Name)
+        .Select(x => new { x.Id, x.Name, x.Role, x.Version }).ToListAsync();
     
-    [HttpPost("users"), Authorize(Roles = "Admin")]
+    [HttpPost("users"), Authorize(Roles = UserRole.Admin)]
     public async Task<IActionResult> CreateUser(UserRequest r)
     {
         var name = r.Name.Trim();
@@ -69,5 +71,18 @@ public class AuthController(AppDb db, PasswordHasher<User> hasher) : ControllerB
         await db.SaveChangesAsync(); 
         
         return StatusCode(201, new { user.Id, user.Name, user.Role });
+    }
+
+    [HttpPut("users/{id:int}/role"), Authorize(Roles = UserRole.Admin)]
+    public async Task<IActionResult> ChangeRole(int id, UserRoleRequest request, CancellationToken ct)
+    {
+        var user = await db.Users.SingleOrDefaultAsync(x => x.Id == id, ct)
+            ?? throw new BusinessException("Nie znaleziono użytkownika.", 404);
+        Rules.Version(user, request.Version);
+        Rules.Require(user.Role != UserRole.Admin, "Tutaj można zmieniać przydział pracowników produkcji.");
+
+        user.Role = request.Role;
+        await db.SaveChangesAsync(ct);
+        return NoContent();
     }
 }

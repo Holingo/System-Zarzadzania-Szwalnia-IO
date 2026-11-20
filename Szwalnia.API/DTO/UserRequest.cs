@@ -9,6 +9,6 @@ public record UserRequest(
     [Required, StringLength(200, MinimumLength = 12)]
     string Password,
     
-    [Required, RegularExpression("^(Admin|Worker)$")] 
+    [Required, RegularExpression(UserRole.AllPattern)]
     string Role
 );

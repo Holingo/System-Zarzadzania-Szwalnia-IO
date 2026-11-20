@@ -77,16 +77,18 @@ public class ProductionQueries(AppDb db)
             .Select(x => new HistoryResponse(x.Status, x.ChangedAt, x.User.Name)).ToListAsync(ct);
     }
 
-    public async Task<DashboardResponse> Dashboard(CancellationToken ct)
+    public async Task<DashboardResponse> Dashboard(bool canCut, bool canSew, CancellationToken ct)
     {
         var now = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTimeOffset.UtcNow, "Europe/Warsaw");
         var today = DateOnly.FromDateTime(now.DateTime);
         return new DashboardResponse(
-            await db.Cuts.CountAsync(x => x.Status == CutStatus.Queued, ct),
-            await db.Cuts.CountAsync(x => x.Status == CutStatus.Cutting, ct),
-            await db.Batches.SumAsync(x => (long)x.Quantity - x.AllocatedQuantity, ct),
-            await db.Sews.CountAsync(x => x.Status == SewStatus.Sewing, ct),
-            await db.Sews.CountAsync(x => x.DueDate < today && x.Status != SewStatus.Sewn, ct));
+            canCut ? await db.Cuts.CountAsync(x => x.Status == CutStatus.Queued, ct) : null,
+            canCut ? await db.Cuts.CountAsync(x => x.Status == CutStatus.Cutting, ct) : null,
+            canSew ? await db.Batches.CountAsync(x => x.AllocatedQuantity < x.Quantity, ct) : null,
+            canSew ? await db.Batches.SumAsync(x => (long)x.Quantity - x.AllocatedQuantity, ct) : null,
+            canSew ? await db.Cuts.Where(x => x.Status != CutStatus.Cut).SumAsync(x => (long)x.Quantity, ct) : null,
+            canSew ? await db.Sews.CountAsync(x => x.Status == SewStatus.Sewing, ct) : null,
+            canSew ? await db.Sews.CountAsync(x => x.DueDate < today && x.Status != SewStatus.Sewn, ct) : null);
     }
 
     private static T? FilterStatus<T>(string? value) where T : struct, Enum

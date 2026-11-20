@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Szwalnia.API.Data;
@@ -8,7 +8,6 @@ using Szwalnia.API.Services;
 var builder = WebApplication.CreateBuilder(args);
 var secureCookies = builder.Configuration.GetValue("Security:SecureCookies", true);
 
-// Rejestracja usług wykorzystywanych przez aplikacje
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -26,6 +25,7 @@ builder.Services.AddScoped<CatalogService>();
 builder.Services.AddScoped<ProductionService>();
 builder.Services.AddScoped<ProductionQueries>();
 builder.Services.AddScoped<ReportService>();
+builder.Services.AddScoped<SessionCookieEvents>();
 builder.Services.AddHostedService<ReportWorker>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -36,16 +36,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.SameSite = SameSiteMode.Lax;
         options.Cookie.SecurePolicy = secureCookies ? CookieSecurePolicy.Always : CookieSecurePolicy.SameAsRequest;
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
-        options.Events.OnRedirectToLogin = context =>
-        {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            return Task.CompletedTask;
-        };
-        options.Events.OnRedirectToAccessDenied = context =>
-        {
-            context.Response.StatusCode = StatusCodes.Status403Forbidden;
-            return Task.CompletedTask;
-        };
+        options.EventsType = typeof(SessionCookieEvents);
     });
 var keysPath = builder.Configuration["Security:KeysPath"];
 if (!string.IsNullOrWhiteSpace(keysPath))
@@ -63,8 +54,7 @@ builder.Services.AddRateLimiter(options =>
         limiter.Window = TimeSpan.FromMinutes(1);
     });
 });
-    
-// Utworzenie aplikacji na podstawie konfiguracji
+
 var app = builder.Build();
 app.UseExceptionHandler();
 if (app.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("Swagger:Enabled"))
@@ -74,7 +64,7 @@ if (app.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("Swa
         """
         (request) => {
             if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method?.toUpperCase())) {
-                request.headers['X-Requested-With'] = 'SzwalniaFlow';
+                request.headers['X-Requested-With'] = 'Szwalnia';
             }
             return request;
         }
@@ -87,10 +77,11 @@ app.UseRateLimiter();
 app.Use(async (context, next) =>
 {
     var request = context.Request;
+    var requestedWith = request.Headers["X-Requested-With"];
     if (request.Path.StartsWithSegments("/api") &&
         (HttpMethods.IsPost(request.Method) || HttpMethods.IsPut(request.Method) ||
          HttpMethods.IsDelete(request.Method) || HttpMethods.IsPatch(request.Method)) &&
-        request.Headers["X-Requested-With"] != "SzwalniaFlow")
+        requestedWith != "Szwalnia" && requestedWith != "SzwalniaFlow")
     {
         await Results.Problem(statusCode: 400, title: "Brakuje nagłówka X-Requested-With.")
             .ExecuteAsync(context);
@@ -101,10 +92,7 @@ app.Use(async (context, next) =>
 });
 app.UseAuthentication();
 app.UseAuthorization();
-
-// Podlaczenie endpointow zdefiniowanych w kontrolerach
 app.MapControllers();
-
 app.MapGet("/health", async (AppDb db, CancellationToken ct) =>
     await db.Database.CanConnectAsync(ct)
         ? Results.Ok(new { status = "ok" })

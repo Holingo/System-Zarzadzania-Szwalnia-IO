@@ -9,10 +9,14 @@ namespace Szwalnia.API.Controllers;
 [Route("api")]
 public class OverviewController(ProductionQueries queries) : ControllerBase
 {
-    [HttpGet("dashboard")]
-    public Task<DashboardResponse> Dashboard(CancellationToken ct) => queries.Dashboard(ct);
+    [HttpGet("dashboard"), Authorize(Roles = UserRole.All)]
+    public Task<DashboardResponse> Dashboard(CancellationToken ct) => queries.Dashboard(
+        User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Cutting),
+        User.IsInRole(UserRole.Admin) || User.IsInRole(UserRole.Sewing), ct);
 
-    [HttpGet("history/{resource}/{id:int}")]
-    public Task<List<HistoryResponse>> History(string resource, int id, CancellationToken ct) =>
-        queries.History(resource, id, ct);
+    [HttpGet("history/cuts/{id:int}"), Authorize(Roles = UserRole.CuttingAccess)]
+    public Task<List<HistoryResponse>> CutHistory(int id, CancellationToken ct) => queries.History("cuts", id, ct);
+
+    [HttpGet("history/sews/{id:int}"), Authorize(Roles = UserRole.SewingAccess)]
+    public Task<List<HistoryResponse>> SewHistory(int id, CancellationToken ct) => queries.History("sews", id, ct);
 }

@@ -25,6 +25,7 @@ const reports = ref([]),
   modalError = ref(''),
   history = ref(null)
 let timer
+let polling = false
 const today = () => {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Europe/Warsaw',
@@ -41,20 +42,46 @@ const monday = () => {
   return date.toISOString().slice(0, 10)
 }
 const weekStart = ref(monday())
+const productionRoles = [
+  { id: 'CuttingWorker', name: 'Pracownik krojenia' },
+  { id: 'SewingWorker', name: 'Pracownik szycia' },
+]
+const allRoles = [...productionRoles, { id: 'Admin', name: 'Administrator' }]
+const roleNames = Object.fromEntries(allRoles.map(({ id, name }) => [id, name]))
 const admin = computed(() => user.value?.role === 'Admin')
+const canCut = computed(() => admin.value || user.value?.role === 'CuttingWorker')
+const canSew = computed(() => admin.value || user.value?.role === 'SewingWorker')
 const tabs = computed(() => [
   ['dashboard', 'Przegląd'],
-  ['cuts', 'Krojenie'],
-  ['sews', 'Szycie'],
-  ['batches', 'Partie wykrojów'],
-  ['reports', 'Raporty tygodniowe'],
-  ['products', 'Produkty i normy'],
-  ['materials', 'Materiały'],
-  ['rolls', 'Belki materiału'],
-  ['seamstresses', 'Chałupniczki'],
-  ...(admin.value ? [['users', 'Użytkownicy']] : []),
+  ...(canCut.value ? [['cuts', 'Krojenie']] : []),
+  ...(canSew.value ? [['sews', 'Szycie'], ['batches', 'Partie wykrojów']] : []),
+  ...(admin.value
+    ? [
+        ['reports', 'Raporty tygodniowe'],
+        ['products', 'Produkty i normy'],
+        ['materials', 'Materiały'],
+        ['rolls', 'Belki materiału'],
+        ['seamstresses', 'Chałupniczki'],
+        ['users', 'Użytkownicy'],
+      ]
+    : []),
 ])
 const title = computed(() => tabs.value.find((x) => x[0] === tab.value)?.[1] || '')
+const availableBatches = computed(() => options.value.batches.filter((x) => x.available > 0))
+const dashboardMetrics = computed(() => [
+  ...(canCut.value
+    ? [['queued', 'W kolejce do krojenia'], ['cutting', 'W trakcie krojenia']]
+    : []),
+  ...(canSew.value
+    ? [
+        ['readyBatches', 'Partie gotowe do przydziału'],
+        ['availableSets', 'Komplety gotowe do szycia'],
+        ['incomingSets', 'Komplety przed zakończeniem krojenia'],
+        ['sewing', 'W trakcie szycia'],
+        ['overdue', 'Opóźnione zlecenia szycia'],
+      ]
+    : []),
+])
 const labels = {
   Queued: 'W kolejce',
   Cutting: 'W trakcie krojenia',
@@ -77,12 +104,26 @@ const catalogRows = computed(() =>
 )
 const canCreate = computed(
   () =>
-    !['dashboard', 'batches', 'reports'].includes(tab.value) &&
-    (admin.value || !['products', 'materials'].includes(tab.value)),
+    (tab.value === 'cuts' && canCut.value) ||
+    (tab.value === 'sews' && canSew.value) ||
+    (admin.value && ['materials', 'products', 'rolls', 'seamstresses', 'users'].includes(tab.value)),
 )
+function clearSession() {
+  user.value = null
+  tab.value = 'dashboard'
+  modal.value = null
+  history.value = null
+  report.value = null
+  dashboard.value = {}
+  options.value = { materials: [], products: [], rolls: [], seamstresses: [], batches: [] }
+  rows.value = []
+  total.value = 0
+  reports.value = []
+  users.value = []
+}
 function handleError(e) {
   error.value = e.message
-  if (e.status === 401) user.value = null
+  if (e.status === 401) clearSession()
 }
 async function run(action) {
   if (busy.value) return
@@ -130,6 +171,11 @@ function assignBatch(row) {
   open('sews')
   form.value.batchId = row.id
 }
+function changeUserRole(row) {
+  modalError.value = ''
+  modal.value = { kind: 'changeRole', id: row.id, version: row.version, name: row.name }
+  form.value = { role: row.role }
+}
 async function signIn() {
   await run(async () => {
     user.value = await api('/auth/login', { method: 'POST', body: login.value })
@@ -140,8 +186,7 @@ async function signIn() {
 async function logout() {
   await run(async () => {
     await api('/auth/logout', { method: 'POST' })
-    user.value = null
-    tab.value = 'dashboard'
+    clearSession()
   })
 }
 watch(tab, () => {
@@ -153,7 +198,7 @@ watch(tab, () => {
   if (user.value) run(refresh)
 })
 function switchTab(value) {
-  if (!busy.value) tab.value = value
+  if (!busy.value && tabs.value.some(([key]) => key === value)) tab.value = value
 }
 const fields = computed(() => {
   const text = (key, label, type = 'text', min = 0, step = '0.0001') => ({
@@ -166,6 +211,7 @@ const fields = computed(() => {
   const select = (key, label, items) => ({ key, label, type: 'select', items })
   const materials = options.value.materials.map((x) => ({ id: x.id, name: x.name }))
   if (!modal.value) return []
+  if (modal.value.kind === 'changeRole') return [select('role', 'Rola', productionRoles)]
   if (modal.value.kind === 'finishCut')
     return [
       text('actualQuantity', 'Poprawne komplety (szt.)', 'number', 0, '1'),
@@ -182,10 +228,7 @@ const fields = computed(() => {
     return [
       text('name', 'Login (minimum 3 znaki)'),
       text('password', 'Hasło (minimum 12 znaków)', 'password'),
-      select('role', 'Rola', [
-        { id: 'Worker', name: 'Pracownik' },
-        { id: 'Admin', name: 'Administrator' },
-      ]),
+      select('role', 'Rola', allRoles),
     ]
   if (kind === 'rolls')
     return [
@@ -238,9 +281,7 @@ const fields = computed(() => {
             select(
               'batchId',
               'Partia wykrojów',
-              options.value.batches
-                .filter((x) => x.available > 0)
-                .map((x) => ({
+              availableBatches.value.map((x) => ({
                   id: x.id,
                   name: `#${x.id} · ${x.product} · ${x.available} dostępnych`,
                 })),
@@ -290,7 +331,7 @@ function open(resource = tab.value, row = null) {
         name: '',
         variant: '',
         phone: '',
-        role: 'Worker',
+        role: 'CuttingWorker',
         materialId: '',
         widthCm: 160,
         remainingMeters: 0,
@@ -315,7 +356,12 @@ async function save() {
   modalError.value = ''
   try {
     const m = modal.value
-    if (m.kind === 'finishCut')
+    if (m.kind === 'changeRole')
+      await api(`/auth/users/${m.id}/role`, {
+        method: 'PUT',
+        body: { role: form.value.role, version: m.version },
+      })
+    else if (m.kind === 'finishCut')
       await api(`/cuts/${m.id}/status`, {
         method: 'POST',
         body: { ...form.value, version: m.version, status: 'Cut' },
@@ -346,10 +392,7 @@ async function save() {
   } catch (e) {
     if (modal.value) modalError.value = e.message
     else handleError(e)
-    if (e.status === 401) {
-      user.value = null
-      modal.value = null
-    }
+    if (e.status === 401) handleError(e)
   } finally {
     busy.value = false
   }
@@ -419,16 +462,35 @@ onMounted(async () => {
   } finally {
     checking.value = false
   }
-  timer = setInterval(async () => {
-    if (user.value && tab.value === 'reports' && !busy.value) {
-      try {
-        reports.value = await api('/reports')
-      } catch (e) {
-        handleError(e)
+  timer = setInterval(pollActiveTab, 5000)
+})
+async function pollActiveTab() {
+  if (!user.value || busy.value || modal.value || polling || document.hidden) return
+  const currentUser = user.value
+  const currentTab = tab.value
+  if (!['dashboard', 'reports'].includes(currentTab)) return
+  const stillActive = () => user.value === currentUser && tab.value === currentTab
+  polling = true
+  try {
+    if (currentTab === 'reports') {
+      const result = await api('/reports')
+      if (stillActive() && !busy.value) reports.value = result
+    } else {
+      const [summary, catalog] = await Promise.all([
+        api('/dashboard'),
+        canSew.value ? api('/catalog/options') : null,
+      ])
+      if (stillActive() && !busy.value && !modal.value) {
+        dashboard.value = summary
+        if (catalog) options.value = catalog
       }
     }
-  }, 3000)
-})
+  } catch (e) {
+    if (stillActive()) handleError(e)
+  } finally {
+    polling = false
+  }
+}
 onUnmounted(() => clearInterval(timer))
 </script>
 
@@ -438,7 +500,7 @@ onUnmounted(() => clearInterval(timer))
     <form class="panel w-full max-w-md p-9" @submit.prevent="signIn">
       <span class="badge bg-mint text-forest">ZARZĄDZANIE PRODUKCJĄ</span>
       <h1 class="mb-2 mt-6 text-3xl font-bold tracking-tight text-forest">
-        SzwalniaFlow<span class="text-emerald-600">.</span>
+        Szwalnia
       </h1>
       <p class="mb-8 text-sm text-slate-500">Od belki materiału do gotowego produktu.</p>
       <label class="mb-5"
@@ -465,7 +527,7 @@ onUnmounted(() => clearInterval(timer))
   <div v-else class="min-h-screen lg:flex">
     <aside class="bg-forest p-5 text-white lg:fixed lg:inset-y-0 lg:w-64">
       <div class="mb-2 px-3 pt-3 text-2xl font-bold tracking-tight">
-        SzwalniaFlow<span class="text-emerald-300">.</span>
+        Szwalnia
       </div>
       <p class="mb-9 px-3 text-xs text-emerald-100/60">KROJENIE · SZYCIE · REALIZACJA</p>
       <nav class="flex flex-wrap gap-1 lg:block lg:space-y-1" aria-label="Nawigacja główna">
@@ -490,7 +552,7 @@ onUnmounted(() => clearInterval(timer))
       >
         <div class="text-sm font-semibold">{{ user.name }}</div>
         <div class="mt-1 text-xs text-emerald-100/60">
-          {{ admin ? 'Administrator' : 'Pracownik' }}
+          {{ roleNames[user.role] }}
         </div>
         <button class="mt-4 text-xs underline" :disabled="busy" @click="logout">Wyloguj się</button>
       </div>
@@ -518,41 +580,43 @@ onUnmounted(() => clearInterval(timer))
         {{ notice }}
       </div>
       <template v-if="tab === 'dashboard'">
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <div class="grid gap-4 sm:grid-cols-2" :class="canSew ? 'xl:grid-cols-4' : ''">
           <article
-            v-for="[key, label] in [
-              ['queued', 'W kolejce do krojenia'],
-              ['cutting', 'W trakcie krojenia'],
-              ['availableSets', 'Komplety do przydziału'],
-              ['sewing', 'W trakcie szycia'],
-              ['overdue', 'Opóźnione zlecenia szycia'],
-            ]"
+            v-for="[key, label] in dashboardMetrics"
             :key="key"
             class="panel p-5"
+            :class="key === 'availableSets' ? 'bg-mint' : ''"
           >
             <p class="text-xs text-slate-500">{{ label }}</p>
-            <p class="mt-4 text-4xl font-semibold text-forest">{{ dashboard[key] || 0 }}</p>
+            <p class="mt-4 text-4xl font-semibold text-forest">{{ number(dashboard[key]) }}</p>
           </article>
         </div>
-        <section class="panel mt-7 p-7">
-          <span class="badge bg-mint text-forest">PRZEPŁYW PRODUKCJI</span>
-          <h2 class="mt-5 text-xl font-semibold">Każdy komplet ma swój kolejny etap.</h2>
-          <div class="mt-6 grid gap-4 md:grid-cols-3">
-            <div
-              v-for="(text, i) in [
-                'Utwórz zlecenie krojenia i zarezerwuj materiał.',
-                'Zakończ krojenie, podając rzeczywiste ilości.',
-                'Rozdziel komplety między chałupniczki i odbierz szycie.',
-              ]"
-              :key="text"
-              class="rounded-xl bg-slate-50 p-5"
+        <section v-if="canSew" class="panel mt-7 p-6">
+          <header class="flex flex-wrap items-center justify-between gap-3">
+            <h2 class="text-xl font-semibold text-forest">Partie do przekazania do szycia</h2>
+            <button class="btn secondary" :disabled="busy" @click="switchTab('batches')">
+              Wszystkie partie
+            </button>
+          </header>
+          <ul v-if="availableBatches.length" class="mt-4 divide-y divide-slate-200">
+            <li
+              v-for="batch in availableBatches.slice(0, 5)"
+              :key="batch.id"
+              class="flex flex-wrap items-center justify-between gap-3 py-4"
             >
-              <span class="text-sm font-bold text-emerald-700">0{{ i + 1 }}</span>
-              <p class="mt-3 text-sm leading-relaxed text-slate-600">{{ text }}</p>
-            </div>
-          </div>
-          <button class="btn mt-6" @click="switchTab('cuts')">Przejdź do krojenia →</button>
+              <div>
+                <p class="font-semibold text-forest">#{{ batch.id }} · {{ batch.product }} · {{ batch.variant }}</p>
+                <p class="mt-1 text-sm text-slate-500">Dostępne komplety: {{ number(batch.available) }}</p>
+              </div>
+              <button class="btn" :disabled="busy" @click="assignBatch(batch)">Przydziel chałupniczce</button>
+            </li>
+          </ul>
+          <p v-else class="mt-4 text-sm text-slate-600">Brak gotowych kompletów do przydziału.</p>
         </section>
+        <div v-if="canCut" class="mt-6 flex flex-wrap gap-3">
+          <button class="btn" :disabled="busy" @click="open('cuts')">Dodaj zlecenie krojenia</button>
+          <button class="btn secondary" :disabled="busy" @click="switchTab('cuts')">Lista zleceń krojenia</button>
+        </div>
       </template>
       <template v-else-if="isOrder">
         <form
@@ -801,12 +865,23 @@ onUnmounted(() => clearInterval(timer))
               <tr>
                 <th>Login</th>
                 <th>Rola</th>
+                <th>Akcje</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="u in users" :key="u.id">
                 <td>{{ u.name }}</td>
-                <td>{{ u.role === 'Admin' ? 'Administrator' : 'Pracownik' }}</td>
+                <td>{{ roleNames[u.role] }}</td>
+                <td>
+                  <button
+                    v-if="u.role !== 'Admin'"
+                    class="btn secondary"
+                    :disabled="busy"
+                    @click="changeUserRole(u)"
+                  >
+                    Zmień rolę
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -907,7 +982,9 @@ onUnmounted(() => clearInterval(timer))
         <div class="mb-6 flex items-center justify-between">
           <h2 id="modal-title" class="text-xl font-bold">
             {{
-              modal.kind === 'finishCut'
+              modal.kind === 'changeRole'
+                ? `Zmień rolę konta ${modal.name}`
+                : modal.kind === 'finishCut'
                 ? 'Zakończ krojenie'
                 : modal.id
                   ? 'Edytuj dane'
