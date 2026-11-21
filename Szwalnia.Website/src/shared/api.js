@@ -15,7 +15,8 @@ export async function api(path, options = {}) {
         'X-Requested-With': 'Szwalnia',
         ...options.headers,
       },
-      body: options.body === undefined ? undefined : JSON.stringify(options.body),
+      body:
+        options.body === undefined ? undefined : JSON.stringify(options.body),
     })
   } catch {
     throw new ApiError('Nie można połączyć się z serwerem.', 0)
@@ -27,7 +28,9 @@ export async function api(path, options = {}) {
     } catch {
       /* status fallback */
     }
-    const details = data.errors ? Object.values(data.errors).flat().join(' ') : ''
+    const details = data.errors
+      ? Object.values(data.errors).flat().join(' ')
+      : ''
     const fallback =
       {
         401: 'Sesja wygasła. Zaloguj się ponownie.',
@@ -38,7 +41,3 @@ export async function api(path, options = {}) {
   }
   return response.status === 204 ? null : response.json()
 }
-export const money = (value) =>
-  new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(value || 0)
-export const number = (value) =>
-  new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 2 }).format(value || 0)
